@@ -1,0 +1,22 @@
+name: Unzip Files
+on:
+  push:
+    paths:
+      - 'jshen.onrender.com.zip'
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Unzip and cleanup
+        run: |
+          unzip jshen.onrender.com.zip -d extracted_files
+          mv extracted_files/jshen.onrender.com/* .
+          rm -rf extracted_files jshen.onrender.com.zip
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "Auto-unzip static files" || echo "No changes"
+          git push
